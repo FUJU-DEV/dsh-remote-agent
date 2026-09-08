@@ -1,0 +1,33 @@
+# Mount dsh-remote-agent when this package is registered as a DeepSeek Harness profile bundle.
+- insert:
+    - id: remote-agent
+      name: dsh-remote-agent
+      config:
+        transport: ssh
+        defaultHost: ""
+        agentCommand: dsh --profile headless
+        dshCommand: dsh
+        defaultProfile: headless
+        defaultCwd: ""
+        sshCommand: ssh
+        remoteShell: auto
+        ssh:
+          connectTimeout: 10
+          strictHostKeyChecking: accept-new
+          batchMode: true
+        httpUrl: ""
+        httpToken: ""
+        timeoutSeconds: 600
+        maxOutputBytes: 2097152
+        maxSpillBytes: 67108864
+        spillDir: ""
+        enableRunInBackground: true
+        sshWrapper: true
+        discoverSessions: true
+        rememberSessions: true
+        sessionsRoot: ""
+        fetchTailBytes: 524288
+        resumeContextBytes: 262144
+        defaultPermissionMode: workspace-write
+        maxPermissionMode: danger-full-access
+        endpoints: {}

@@ -1,0 +1,20 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - run: node --check lib/index.js
+      - run: node --check lib/client.js
+      - run: node --check server/remote-agent-server.mjs
+      - run: node test/smoke.mjs lib/index.js
+      - run: node test/client-bundle-smoke.mjs lib/client.js
