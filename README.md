@@ -275,7 +275,7 @@ node test/remote-dsh-real.mjs    #  8 项：真远程 DSH 会话（远端模型�
 
 `remote-dsh-real.mjs` 是最终验收：暗号「黄瓜999」只存在于第一次会话的日志里，续跑的新会话 prompt 不含暗号，远端模型只能从注入的日志尾部找回它——这是"远程会话连续性"的直接证明。
 
-**真实机器的十项验收清单**（每项打勾才算通过）：
+**真实机器的十项验收清单**：
 
 1. remote_dsh 小任务 → 返回答案 + `session id: session-…`
 2. `run_in_background` → job id；`job_output` 增量可读
@@ -288,7 +288,6 @@ node test/remote-dsh-real.mjs    #  8 项：真远程 DSH 会话（远端模型�
 9. 设置页改 host → 不重启立即生效
 10. 设置页：YAML 端点徽标 / token 脱敏 / 远端浏览器只读
 
-**拆除沙盒**（用完不留痕迹）：`wsl -d Ubuntu-22.04 -u root -e bash -c 'pkill sshd'`、删除 `%TEMP%\dsr-ssh-test` 密钥、`ssh-keygen -R "[localhost]:2222"`；docker-desktop 发行版自始至终不要动。
 
 ## 说明与限制
 
@@ -299,21 +298,6 @@ node test/remote-dsh-real.mjs    #  8 项：真远程 DSH 会话（远端模型�
 - 远端缺 `zstd` 时 fetch 会报清晰错误，绝不把压缩二进制喂给模型。
 - 设置页 RPC 仅本机回环；从其他电脑经局域网访问 UI 时设置卡片自动只读。
 
-## 发布清单（npm + GitHub）
-
-```powershell
-npm login                                   # ① npm 账号
-npm view dsh-remote-agent version           # ② 查重名；被占则改名或改 scope
-# ③ 改 package.json：name / version / repository / homepage
-git init && git add . && git commit -m "…"  # ④ 建 GitHub 仓库（.gitignore 已备好）
-git remote add origin https://github.com/<you>/dsh-remote-agent
-git push -u origin main
-npm pack --dry-run                          # ⑤ 发布前检查包内容（应含 lib/ server/ cordis.patch.yml）
-npm publish --access public                 # ⑥ 发布
-# ⑦ 用户侧安装 = 三条命令（见"安装"）；远端被控 = npx dsh-remote-agent-server 或装 DSH
-```
-
-版本策略：peerDependencies 锁定 DSH `^0.1.1-rc.2`；DSH 大版本升级时随发新版本。
 
 ## 开发
 
