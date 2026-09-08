@@ -45,23 +45,41 @@ DeepSeek Harness（DSH）插件：让主 DSH Agent 通过 SSH 或 HTTP 调用部
 
 ## 安装
 
-**npm 安装（发布后）**
+**npm 安装（推荐）**
 
 ```powershell
-dsh plugin --profile web add dsh-remote-agent
-dsh plugin --profile web install
-# 重启 DSH：dsh web
+dsh plugin --profile web add dsh-remote-agent   # 1. 注册依赖 + bundle
+dsh plugin --profile web install                # 2. 从 npm 拉取安装
+# 3. 重启 DSH：关掉正在跑的 dsh web，重新执行 dsh web
 ```
 
-**从 GitHub 源码安装**
+**从 GitHub 源码安装**（开发者 / 尝鲜未发布版本 / 想改源码调试）
 
 ```powershell
-git clone https://github.com/<你的用户名>/dsh-remote-agent <path>
-dsh plugin --profile web add "file:<path>"
+# 1. 克隆到 DSH 插件目录（与 profiles 平级；DSH 主目录默认是 C:\Users\<你>\.dsh）
+git clone https://github.com/FUJU-DEV/dsh-remote-agent "$env:USERPROFILE\.dsh\plugins\dsh-remote-agent"
+
+# 2. 注册进 web profile（file: 路径相对 profile 目录，上溯两级就是 plugins）
+dsh plugin --profile web add "file:../../plugins/dsh-remote-agent"
+
+# 3. 安装（把插件复制进 profiles\web\node_modules）
+dsh plugin --profile web install
+
+# 4. 重启 DSH 生效
+```
+
+```bash
+# Linux / macOS 等价写法（路径同理）
+git clone https://github.com/FUJU-DEV/dsh-remote-agent ~/.dsh/plugins/dsh-remote-agent
+dsh plugin --profile web add "file:../../plugins/dsh-remote-agent"
 dsh plugin --profile web install
 ```
 
-> `file:` 依赖会复制出独立副本，改源码后需重跑 install 或手动同步 `lib/`、`package.json`、`cordis.patch.yml`、`server/`。任何改动都要重启 DSH 生效。
+> **源码安装必读**
+> - `file:` 依赖会复制出**独立副本**：改完源码后要么重跑 `dsh plugin --profile web install`，要么手动把 `lib\`、`package.json`、`cordis.patch.yml`、`server\` 复制到 `profiles\web\node_modules\dsh-remote-agent\`；任何改动都要重启 DSH 才生效。
+> - 锁定版本：克隆后 `git checkout <tag>`（如 `git checkout v0.2.0`）再执行第 2–4 步；更新源码在克隆目录 `git pull` 后重跑第 3 步。
+> - 换其他 profile（tui 等）：把命令里的 `web` 换成对应 profile 名即可。
+> - 纯客户端功能（设置卡片）随包内 `lib\client.js` 自动下发，无需额外安装。
 
 ## 快速上手
 
